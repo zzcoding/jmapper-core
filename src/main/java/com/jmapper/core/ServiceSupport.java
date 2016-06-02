@@ -34,9 +34,12 @@ import com.jmapper.core.mapper.EntityMapper;
 import com.jmapper.core.mapper.EntityProperty;
 import com.jmapper.core.util.PageModel;
 
+import freemarker.core.ParseException;
 import freemarker.template.Configuration;
+import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 
 /**
  * 
@@ -135,7 +138,7 @@ public class ServiceSupport {
 				ps.executeUpdate();
 				ResultSet rs = ps.getGeneratedKeys();
 				rs.next();
-				logger.debug(rs.getInt(1));
+				logger.warn(rs.getInt(1));
 				return rs.getInt(1);
 			}
 		});
@@ -294,9 +297,9 @@ public class ServiceSupport {
 		try {
 			resultMap = jdbcTemplate.queryForMap(sql, args);
 		} catch (IncorrectResultSizeDataAccessException e) {
-			logger.debug("queryForMapSimple未查询到唯一结果集！");
+			logger.warn("queryForMapSimple未查询到唯一结果集！");
 		} catch (IncorrectResultSetColumnCountException e) {
-			logger.debug("queryForMapSimple只能够以一列为结果集！");
+			logger.warn("queryForMapSimple只能够以一列为结果集！");
 		}
 
 		return resultMap;
@@ -315,9 +318,9 @@ public class ServiceSupport {
 			logger.info(resultSql);
 			resultMap = jdbcTemplate.queryForMap(resultSql, args);
 		} catch (IncorrectResultSizeDataAccessException e) {
-			logger.debug("queryForMapSimpleByMapper未查询到唯一结果集！");
+			logger.warn("queryForMapSimpleByMapper未查询到唯一结果集！");
 		} catch (IncorrectResultSetColumnCountException e) {
-			logger.debug("queryForMapSimpleByMapper只能够以一列为结果集！");
+			logger.warn("queryForMapSimpleByMapper只能够以一列为结果集！");
 		} catch (TemplateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -338,9 +341,9 @@ public class ServiceSupport {
 			logger.info(resultSql);
 			resultMap = namedParameterJdbcTemplate.queryForMap(resultSql, parameterMap);
 		} catch (IncorrectResultSizeDataAccessException e) {
-			logger.debug("queryForMapNamedParameterByMapper未查询到唯一结果集！");
+			logger.warn("queryForMapNamedParameterByMapper未查询到唯一结果集！");
 		} catch (IncorrectResultSetColumnCountException e) {
-			logger.debug("queryForMapNamedParameterByMapper只能够以一列为结果集！");
+			logger.warn("queryForMapNamedParameterByMapper只能够以一列为结果集！");
 		} catch (TemplateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -356,9 +359,9 @@ public class ServiceSupport {
 
 			resultMap = namedParameterJdbcTemplate.queryForMap(mapper, parameterMap);
 		} catch (IncorrectResultSizeDataAccessException e) {
-			logger.debug("queryForMapNamedParameter未查询到唯一结果集！");
+			logger.warn("queryForMapNamedParameter未查询到唯一结果集！");
 		} catch (IncorrectResultSetColumnCountException e) {
-			logger.debug("queryForMapNamedParameter只能够以一列为结果集！");
+			logger.warn("queryForMapNamedParameter只能够以一列为结果集！");
 		}
 
 		return resultMap;
@@ -502,9 +505,9 @@ public class ServiceSupport {
 		try {
 			t = jdbcTemplate.queryForObject(sql, requiredType, args);
 		} catch (IncorrectResultSizeDataAccessException e) {
-			logger.debug("queryForObject未查询到唯一结果集！");
+			logger.warn("queryForObject未查询到唯一结果集！");
 		} catch (IncorrectResultSetColumnCountException e) {
-			logger.debug("queryForObject只能够以一列为结果集");
+			logger.warn("queryForObject只能够以一列为结果集");
 		}
 		return t;
 	}
@@ -522,9 +525,9 @@ public class ServiceSupport {
 			logger.info(resultSql);
 			t = jdbcTemplate.queryForObject(resultSql, requiredType, args);
 		} catch (IncorrectResultSizeDataAccessException e) {
-			logger.debug("queryForObjectByMapper未查询到唯一结果集！");
+			logger.warn("queryForObjectByMapper未查询到唯一结果集！");
 		} catch (IncorrectResultSetColumnCountException e) {
-			logger.debug("queryForObjectByMapper只能够以一列为结果集");
+			logger.warn("queryForObjectByMapper只能够以一列为结果集");
 		} catch (TemplateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -596,7 +599,7 @@ public class ServiceSupport {
 		try{
 			totalCount = namedParameterJdbcTemplate.queryForInt(countSql, parameterMap);
 		} catch (IncorrectResultSizeDataAccessException e) {
-			logger.debug("queryForIntNamedParameter未查询到唯一结果集！");
+			logger.warn("queryForIntNamedParameter未查询到唯一结果集！");
 		}
 		return totalCount;
 		
@@ -636,7 +639,7 @@ public class ServiceSupport {
 				return new ArrayList<Map<String, Object>>();
 			}
 			resultSql = resultSql + " limit :startrow,:pageSize";
-			logger.debug(resultSql);
+			logger.warn(resultSql);
 			parameterMap.put("startrow", pageModel.getStartRow());
 			parameterMap.put("pageSize", pageModel.getPageSize());
 			resultList = namedParameterJdbcTemplate.queryForList(resultSql, parameterMap);
@@ -664,7 +667,7 @@ public class ServiceSupport {
 				return new ArrayList<Map<String, Object>>();
 			}
 			resultSql = resultSql + " limit ?,?";
-			logger.debug(resultSql);
+			logger.warn(resultSql);
 			ArrayList<Object> params = new ArrayList<Object>();
 			for (Object arg : args) {
 				params.add(arg);
@@ -728,7 +731,7 @@ public class ServiceSupport {
 				return (List<T>) new ArrayList<T>();
 			}
 			resultSql = resultSql + " limit ?,?";
-			logger.debug(resultSql);
+			logger.warn(resultSql);
 			ArrayList<Object> params = new ArrayList<Object>();
 			for (Object arg : args) {
 				params.add(arg);
@@ -761,7 +764,7 @@ public class ServiceSupport {
 				return (List<T>) new ArrayList<T>();
 			}
 			resultSql = resultSql + " limit :startrow,:pageSize";
-			logger.debug(resultSql);
+			logger.warn(resultSql);
 			parameterMap.put("startrow", pageModel.getStartRow());
 			parameterMap.put("pageSize", pageModel.getPageSize());
 			resultList = queryForEntityListNamedParameter(resultSql, requiredType, parameterMap);
@@ -797,8 +800,33 @@ public class ServiceSupport {
 		}, args);
 	}
 
+	public <T> List<T> queryForEntityListSimpleByMapper(String mapper, final Class<T> requiredType, Object... args) {
+		Configuration cfg = mapperEngine.getCfg();
+		Template template;
+		List<T> resultList=null;
+		try {
+			template = cfg.getTemplate(mapper, "utf-8");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			template.process(null, new OutputStreamWriter(baos));
+			String resultSql = baos.toString();
+			resultSql = removeBlank(resultSql);
+			resultList =  jdbcTemplate.query(resultSql, new RowMapper<T>() {
+				@Override
+				@SuppressWarnings("unchecked")
+				public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+					return (T) ServiceSupport.this.convert.toBean(rs, requiredType);
+				}
+			}, args);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return resultList; 
+	
+	}
 	public <T> T queryForEntityNamedParameter(String sql, final Class<T> requiredType, Map<String, Object> parameterMap) {
 		T obj = null;
+		
 		try {
 			namedParameterJdbcTemplate.queryForObject(sql, parameterMap, new RowMapper<T>() {
 
@@ -811,7 +839,7 @@ public class ServiceSupport {
 			});
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.debug("queryForEntity未查询到");
+			logger.warn("queryForEntity未查询到");
 		}
 		return obj;
 	}
@@ -827,7 +855,31 @@ public class ServiceSupport {
 			});
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.debug("queryForEntity未查询到");
+			logger.warn("queryForEntity未查询到");
+		}
+		return obj;
+	}
+	
+	public <T> T queryForEntitySimpleByMapper(String mapper, final Class<T> requiredType, Object... args) {
+		T obj = null;
+		Configuration cfg = mapperEngine.getCfg();
+		Template template;
+		try {
+			template = cfg.getTemplate(mapper, "utf-8");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			template.process(null, new OutputStreamWriter(baos));
+			String resultSql = baos.toString();
+			resultSql = removeBlank(resultSql);
+			obj = jdbcTemplate.queryForObject(resultSql, args, new RowMapper<T>() {
+				@SuppressWarnings("unchecked")
+				public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+					return (T) ServiceSupport.this.convert.toBean(rs, requiredType);
+				}
+			});
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.warn("queryForEntity未查询到");
 		}
 		return obj;
 	}
