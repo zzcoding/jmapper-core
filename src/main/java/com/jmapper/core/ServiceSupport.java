@@ -127,9 +127,9 @@ public class ServiceSupport {
 		buffer.append(valueBuffer).append(" ) ");
 		logger.info(buffer.toString());
 		final String insertSQL = buffer.toString();
-		int key = jdbcTemplate.execute(new ConnectionCallback<Integer>() {
+		Object key = jdbcTemplate.execute(new ConnectionCallback<Object>() {
 			@Override
-			public Integer doInConnection(Connection con) throws SQLException, DataAccessException {
+			public Object doInConnection(Connection con) throws SQLException, DataAccessException {
 				PreparedStatement ps = con.prepareStatement(insertSQL, PreparedStatement.RETURN_GENERATED_KEYS);
 				int parameterIndex = 1;
 				for (Object param : params) {
@@ -137,9 +137,15 @@ public class ServiceSupport {
 				}
 				ps.executeUpdate();
 				ResultSet rs = ps.getGeneratedKeys();
-				rs.next();
-				logger.warn(rs.getInt(1));
-				return rs.getInt(1);
+				if(rs.next()){
+					logger.warn(rs.getObject(1));
+					return rs.getObject(1);
+				}else{
+					return null;
+				}
+			
+				
+				
 			}
 		});
 		if (autoKeyfield != null) {
